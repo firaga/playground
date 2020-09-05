@@ -1,0 +1,2 @@
+# effective-go
+go practise
