@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func gen() <-chan int {
+func genLeak() <-chan int {
 	ch := make(chan int)
 	go func() {
 		var n int
@@ -19,7 +19,7 @@ func gen() <-chan int {
 }
 
 func main() {
-	for n := range gen() {
+	for n := range genLeak() {
 		fmt.Println(n)
 		if n == 5 {
 			break
