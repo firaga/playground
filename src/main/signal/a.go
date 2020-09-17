@@ -31,8 +31,12 @@ func main() {
 	}()
 
 	fmt.Println("Program Start...")
-	time.Sleep(10*time.Second)
-
+	sum := 0
+	for {
+		sum++
+		fmt.Println("sum:", sum)
+		time.Sleep(time.Second)
+	}
 }
 
 func GracefullExit() {
