@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -8,22 +9,33 @@ import (
 	"time"
 )
 
+func a(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("Done!")
+			return
+		default:
+			fmt.Println("inloop")
+			time.Sleep(time.Second * 2)
+		}
+	}
+}
 func main() {
 	fmt.Println("start")
 
-	go func() {
-		sigterm := make(chan os.Signal, 1)
-		signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
+	ctx, cancel := context.WithCancel(context.Background())
 
-		select {
-		case <-sigterm:
-			fmt.Println("recive signal")
-			os.Exit(0)
-		}
-	}()
+	go a(ctx)
 
-	for {
-		fmt.Println("inloop")
-		time.Sleep(time.Second * 2)
+	sigterm := make(chan os.Signal, 1)
+	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case <-sigterm:
+		fmt.Println("recive signal")
+		cancel()
+		fmt.Println("recived signal")
+		os.Exit(0)
 	}
 }
